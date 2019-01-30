@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 
-const Icon = styled.img.attrs({
-  src: props => require(`svg/${props.glyph}.svg`),
-  alt: props => props.alt || 'Icon'
-})`
+const Icon = styled.img.attrs(props => ({
+  src: require(`svg/${props.glyph}.svg`),
+  alt: props.alt || 'Icon'
+}))`
   width: ${props => props.width || '2rem'};
   height: ${props => props.height || '2rem'};
 `

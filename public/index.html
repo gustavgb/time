@@ -27,6 +27,19 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script src="https://www.gstatic.com/firebasejs/5.8.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyBPS3G5QHc9DuuzPfGXN87Q7kNsBI3WGWQ",
+        authDomain: "noteapp-2016d.firebaseapp.com",
+        databaseURL: "https://noteapp-2016d.firebaseio.com",
+        projectId: "noteapp-2016d",
+        storageBucket: "noteapp-2016d.appspot.com",
+        messagingSenderId: "675420393083"
+      };
+      firebase.initializeApp(config);
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.

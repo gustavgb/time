@@ -12,7 +12,8 @@ const Container = styled.div`
   ${props => props.theme.lightTransition}
   color: ${props => props.theme.textColor};
   margin: 0 auto;
-  width: 1000px;
+  ${props => props.theme.width}
+  padding: 0 2rem 50px;
 `
 
 const Page = ({ children }) => (

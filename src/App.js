@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { themes, ThemeContext } from 'theme-context'
+import ThemeContext from 'theme-context'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import Page from 'Components/Page'
 import Timeline from 'Components/Timeline'
@@ -24,19 +24,15 @@ class App extends Component {
   constructor (props) {
     super(props)
 
-    const hour = new Date().getHours()
-    const isNight = hour < 8 || hour > 18
-
-    this.state = {
-      theme: isNight ? themes.dark : themes.light,
-      toggleLight: this.toggleLight.bind(this)
-    }
+    this.state = ThemeContext.getState()
   }
 
-  toggleLight () {
-    this.setState({
-      theme: this.state.theme === themes.light ? themes.dark : themes.light
-    })
+  componentDidMount () {
+    this.subscriber = ThemeContext.subscribe(state => this.setState(state))
+  }
+
+  componentwillUnmount () {
+    ThemeContext.unsubscribe(this.subscriber)
   }
 
   render () {

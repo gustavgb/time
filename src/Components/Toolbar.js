@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ThemeContext } from 'theme-context'
+import ThemeContext from 'theme-context'
 import Icon from 'Components/Icon'
 import Button from 'Components/Button'
 
@@ -30,9 +30,9 @@ const Toolbar = () => (
     <Container>
       <Logo>TimeBaby</Logo>
       <ThemeContext.Consumer>
-        {({ toggleLight, theme }) => (
-          <Button onClick={toggleLight} float='right' margin='0 0 0 1rem'>
-            <Icon glyph={theme.isDark ? 'moon' : 'sun'} width='1rem' height='1rem' />
+        {({ getState, dispatch }) => (
+          <Button onClick={() => dispatch('TOGGLE_LIGHT')} float='right' margin='0 0 0 1rem'>
+            <Icon glyph={getState().theme.isDark ? 'moon' : 'sun'} width='1rem' height='1rem' />
           </Button>
         )}
       </ThemeContext.Consumer>

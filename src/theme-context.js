@@ -1,4 +1,4 @@
-import React from 'react'
+import createContext from 'createContext'
 import { css } from 'styled-components'
 
 const commonTheme = {
@@ -21,7 +21,7 @@ const commonTheme = {
   `
 }
 
-export const themes = {
+const themes = {
   light: {
     ...commonTheme,
     isDark: false,
@@ -46,7 +46,24 @@ export const themes = {
   }
 }
 
-export const ThemeContext = React.createContext({
-  theme: themes.light,
-  toggleLight: () => null
-})
+const hour = new Date().getHours()
+const isNight = hour < 8 || hour > 18
+const defaultState = {
+  theme: isNight ? themes.dark : themes.light
+}
+
+const ThemeContext = createContext(
+  (state = { ...defaultState }, action) => {
+    switch (action.type) {
+      case 'TOGGLE_LIGHT':
+        return {
+          ...state,
+          theme: state.theme.isDark ? themes.light : themes.dark
+        }
+      default:
+        return state
+    }
+  }
+)
+
+export default ThemeContext

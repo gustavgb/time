@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import ThemeContext from 'theme-context'
+import themeStore from 'themeStore'
 import Icon from 'Components/Icon'
 import Button from 'Components/Button'
 
@@ -29,13 +29,13 @@ const Toolbar = () => (
   <Wrapper>
     <Container>
       <Logo>TimeBaby</Logo>
-      <ThemeContext.Consumer>
-        {({ getState, dispatch }) => (
+      <themeStore.Consumer>
+        {({ theme }, dispatch) => (
           <Button onClick={() => dispatch('TOGGLE_LIGHT')} float='right' margin='0 0 0 1rem'>
-            <Icon glyph={getState().theme.isDark ? 'moon' : 'sun'} width='1rem' height='1rem' />
+            <Icon glyph={theme.isDark ? 'moon' : 'sun'} width='1rem' height='1rem' />
           </Button>
         )}
-      </ThemeContext.Consumer>
+      </themeStore.Consumer>
       <Button type='cta-a' float='right'>Start time</Button>
     </Container>
   </Wrapper>

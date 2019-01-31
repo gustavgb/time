@@ -1,4 +1,4 @@
-import createContext from 'createContext'
+import createStore from 'createStore'
 import { css } from 'styled-components'
 
 const commonTheme = {
@@ -52,7 +52,7 @@ const defaultState = {
   theme: isNight ? themes.dark : themes.light
 }
 
-const ThemeContext = createContext(
+const themeStore = createStore(
   (state = { ...defaultState }, action) => {
     switch (action.type) {
       case 'TOGGLE_LIGHT':
@@ -66,4 +66,4 @@ const ThemeContext = createContext(
   }
 )
 
-export default ThemeContext
+export default themeStore

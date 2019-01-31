@@ -1,10 +1,10 @@
-import createContext from 'createContext'
+import createStore from 'createStore'
 
 const defaultState = {
   entries: []
 }
 
-const StateContext = createContext(
+const timeStore = createStore(
   (state = { ...defaultState }, action) => {
     switch (action.type) {
       default:
@@ -13,4 +13,4 @@ const StateContext = createContext(
   }
 )
 
-export default StateContext
+export default timeStore

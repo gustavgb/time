@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import ThemeContext from 'theme-context'
+import themeStore from 'themeStore'
+import timeStore from 'timeStore'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import Page from 'Components/Page'
 import Timeline from 'Components/Timeline'
@@ -24,28 +25,26 @@ class App extends Component {
   constructor (props) {
     super(props)
 
-    this.state = ThemeContext.getState()
-  }
-
-  componentDidMount () {
-    this.subscriber = ThemeContext.subscribe(state => this.setState(state))
-  }
-
-  componentwillUnmount () {
-    ThemeContext.unsubscribe(this.subscriber)
+    themeStore.init(this)
   }
 
   render () {
     return (
-      <ThemeContext.Provider value={this.state}>
-        <ThemeProvider theme={this.state.theme}>
-          <Page>
-            <GlobalStyle />
-            <Toolbar />
-            <Timeline />
-          </Page>
-        </ThemeProvider>
-      </ThemeContext.Provider>
+      <timeStore.Provider>
+        <themeStore.Provider>
+          <themeStore.Consumer>
+            {({ theme }) => (
+              <ThemeProvider theme={theme}>
+                <Page>
+                  <GlobalStyle />
+                  <Toolbar />
+                  <Timeline />
+                </Page>
+              </ThemeProvider>
+            )}
+          </themeStore.Consumer>
+        </themeStore.Provider>
+      </timeStore.Provider>
     )
   }
 }

@@ -1,13 +1,17 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux'
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import logReducer from 'reducers/log'
 import themeReducer from 'reducers/theme'
 import thunk from 'redux-thunk'
 
-export const store = createStore(
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+
+export const store = window.store = createStore(
   combineReducers({
     theme: themeReducer,
     log: logReducer
   }),
   {},
-  applyMiddleware(thunk)
+  composeEnhancers(
+    applyMiddleware(thunk)
+  )
 )

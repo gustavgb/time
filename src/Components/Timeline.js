@@ -1,18 +1,33 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { propModel as entryModel } from 'models/log'
+import { connect } from 'react-redux'
+import { selectEntries } from 'selectors/log'
+import Entry from 'Components/Entry'
 
-const Entry = styled.div`
-  ${props => props.theme.lightTransition}
+const Table = styled.table`
   width: 100%;
-  min-height: 10rem;
-  border-bottom: 3px solid ${props => props.theme.border};
-  background-color: ${props => props.theme.foreground};
-  margin: 2rem 0;
-  border-radius: 5px;
+  border-collapse: seperate;
+  border-spacing: 0 1.3rem;
 `
 
-const Timeline = () => [...new Array(3)].map((val, i) => (
-  <Entry key={i} />
-))
+const Timeline = ({ entries }) => (
+  <Table>
+    <tbody>
+      {entries.map(entry => (
+        <Entry key={entry.id} entry={entry} />
+      ))}
+    </tbody>
+  </Table>
+)
 
-export default Timeline
+Timeline.propTypes = {
+  entries: PropTypes.arrayOf(entryModel)
+}
+
+export default connect(
+  state => ({
+    entries: selectEntries(state)
+  })
+)(Timeline)

@@ -5,6 +5,7 @@ import Icon from 'Components/Icon'
 import Button from 'Components/Button'
 import { connect } from 'react-redux'
 import { toggleLight } from 'actions/theme'
+import { addEntry } from 'actions/log'
 import { propModel as themeModel } from 'models/theme'
 
 const Wrapper = styled.div`
@@ -22,7 +23,7 @@ const Container = styled.div`
 const Logo = styled.h1`
   ${props => props.theme.lightTransition}
   color: ${props => props.theme.textColor};
-  font-family: 'Sarabun', sans-serif;
+  font-family: ${props => props.theme.fontFamily};
   float: left;
   margin: 0;
   padding: 0;
@@ -30,21 +31,22 @@ const Logo = styled.h1`
   line-height: 3rem;
 `
 
-const Toolbar = ({ onToggleLight, theme }) => (
+const Toolbar = ({ onToggleLight, theme, onAddEntry }) => (
   <Wrapper>
     <Container>
       <Logo>TimeBaby</Logo>
       <Button onClick={onToggleLight} float='right' margin='0 0 0 1rem'>
         <Icon glyph={theme.isDark ? 'moon' : 'sun'} width='1rem' height='1rem' />
       </Button>
-      <Button type='cta-a' float='right'>Start time</Button>
+      <Button type='cta-a' float='right' onClick={onAddEntry}>Start time</Button>
     </Container>
   </Wrapper>
 )
 
 Toolbar.propTypes = {
   theme: themeModel,
-  onToggleLight: PropTypes.func
+  onToggleLight: PropTypes.func,
+  onAddEntry: PropTypes.func
 }
 
 export default connect(
@@ -52,6 +54,7 @@ export default connect(
     theme: state.theme
   }),
   dispatch => ({
-    onToggleLight: () => dispatch(toggleLight())
+    onToggleLight: () => dispatch(toggleLight()),
+    onAddEntry: () => dispatch(addEntry())
   })
 )(Toolbar)

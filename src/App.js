@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
-import themeStore from 'themeStore'
-import timeStore from 'timeStore'
+import React from 'react'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import Page from 'Components/Page'
 import Timeline from 'Components/Timeline'
 import Toolbar from 'Components/Toolbar'
+import { connect } from 'react-redux'
+import { propModel as themeModel } from 'models/theme'
 
 const GlobalStyle = createGlobalStyle`
   html, body {
@@ -21,32 +21,22 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-class App extends Component {
-  constructor (props) {
-    super(props)
+const App = ({ theme }) => (
+  <ThemeProvider theme={theme}>
+    <Page>
+      <GlobalStyle />
+      <Toolbar />
+      <Timeline />
+    </Page>
+  </ThemeProvider>
+)
 
-    themeStore.init(this)
-  }
-
-  render () {
-    return (
-      <timeStore.Provider>
-        <themeStore.Provider>
-          <themeStore.Consumer>
-            {({ theme }) => (
-              <ThemeProvider theme={theme}>
-                <Page>
-                  <GlobalStyle />
-                  <Toolbar />
-                  <Timeline />
-                </Page>
-              </ThemeProvider>
-            )}
-          </themeStore.Consumer>
-        </themeStore.Provider>
-      </timeStore.Provider>
-    )
-  }
+App.propTypes = {
+  theme: themeModel
 }
 
-export default App
+export default connect(
+  state => ({
+    theme: state.theme
+  })
+)(App)

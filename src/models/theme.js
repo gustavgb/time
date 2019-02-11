@@ -1,5 +1,9 @@
-import createStore from 'createStore'
+import PropTypes from 'prop-types'
 import { css } from 'styled-components'
+
+export const propModel = PropTypes.shape({
+
+})
 
 const commonTheme = {
   lightTransition: css`
@@ -21,7 +25,7 @@ const commonTheme = {
   `
 }
 
-const themes = {
+export const stateModels = {
   light: {
     ...commonTheme,
     isDark: false,
@@ -45,25 +49,3 @@ const themes = {
     }
   }
 }
-
-const hour = new Date().getHours()
-const isNight = hour < 8 || hour > 18
-const defaultState = {
-  theme: isNight ? themes.dark : themes.light
-}
-
-const themeStore = createStore(
-  (state = { ...defaultState }, action) => {
-    switch (action.type) {
-      case 'TOGGLE_LIGHT':
-        return {
-          ...state,
-          theme: state.theme.isDark ? themes.light : themes.dark
-        }
-      default:
-        return state
-    }
-  }
-)
-
-export default themeStore

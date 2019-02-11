@@ -1,11 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import themeStore from 'themeStore'
+import PropTypes from 'prop-types'
 import Icon from 'Components/Icon'
 import Button from 'Components/Button'
+import { connect } from 'react-redux'
+import { toggleLight } from 'actions/theme'
+import { propModel as themeModel } from 'models/theme'
 
 const Wrapper = styled.div`
-  ${props => props.theme.lightTransition};
+  ${props => props.theme.lightTransition}
   background-color: ${props => props.theme.background};
   padding: 25px 0 5px;
 `
@@ -17,6 +20,8 @@ const Container = styled.div`
 `
 
 const Logo = styled.h1`
+  ${props => props.theme.lightTransition}
+  color: ${props => props.theme.textColor};
   font-family: 'Sarabun', sans-serif;
   float: left;
   margin: 0;
@@ -25,20 +30,28 @@ const Logo = styled.h1`
   line-height: 3rem;
 `
 
-const Toolbar = () => (
+const Toolbar = ({ onToggleLight, theme }) => (
   <Wrapper>
     <Container>
       <Logo>TimeBaby</Logo>
-      <themeStore.Consumer>
-        {({ theme }, dispatch) => (
-          <Button onClick={() => dispatch('TOGGLE_LIGHT')} float='right' margin='0 0 0 1rem'>
-            <Icon glyph={theme.isDark ? 'moon' : 'sun'} width='1rem' height='1rem' />
-          </Button>
-        )}
-      </themeStore.Consumer>
+      <Button onClick={onToggleLight} float='right' margin='0 0 0 1rem'>
+        <Icon glyph={theme.isDark ? 'moon' : 'sun'} width='1rem' height='1rem' />
+      </Button>
       <Button type='cta-a' float='right'>Start time</Button>
     </Container>
   </Wrapper>
 )
 
-export default Toolbar
+Toolbar.propTypes = {
+  theme: themeModel,
+  onToggleLight: PropTypes.func
+}
+
+export default connect(
+  state => ({
+    theme: state.theme
+  }),
+  dispatch => ({
+    onToggleLight: () => dispatch(toggleLight())
+  })
+)(Toolbar)

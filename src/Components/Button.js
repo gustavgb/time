@@ -1,6 +1,8 @@
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-const Button = styled.button`
+const ButtonStyle = styled.button`
   ${props => props.theme.lightTransition}
   background-color: ${props => {
     switch (props.type) {
@@ -20,7 +22,66 @@ const Button = styled.button`
   font-size: 1.4rem;
   margin: ${props => props.margin || '0'};
   line-height: 1.4rem;
-  cursor: pointer;
+  cursor: ${props => props.frozen ? 'not-allowed' : 'pointer'};
+  opacity: ${props => props.frozen ? '0.2' : '1'};
 `
+
+class Button extends Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      frozen: false
+    }
+  }
+
+  handleMouseLeave () {
+    this.setState({
+      frozen: false
+    })
+  }
+
+  handleFreeze () {
+    this.setState({
+      frozen: true
+    })
+  }
+
+  handleClick () {
+    const { onClick, freeze } = this.props
+
+    if (onClick) {
+      onClick()
+    }
+    if (freeze) {
+      this.handleFreeze()
+    }
+  }
+
+  render () {
+    const { children, type, float, margin } = this.props
+    const { frozen } = this.state
+
+    return (
+      <ButtonStyle
+        onClick={frozen ? null : this.handleClick.bind(this)}
+        onMouseLeave={this.handleMouseLeave.bind(this)}
+        type={type}
+        float={float}
+        frozen={frozen}
+        margin={margin}
+      >{children}</ButtonStyle>
+    )
+  }
+}
+
+Button.propTypes = {
+  children: PropTypes.any,
+  onClick: PropTypes.func,
+  freeze: PropTypes.bool,
+  type: PropTypes.string,
+  float: PropTypes.string,
+  margin: PropTypes.string
+}
 
 export default Button

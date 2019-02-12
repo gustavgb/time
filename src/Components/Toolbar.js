@@ -20,25 +20,16 @@ const Container = styled.div`
   ${props => props.theme.clearfix}
 `
 
-const Logo = styled.h1`
-  ${props => props.theme.lightTransition}
-  color: ${props => props.theme.textColor};
-  font-family: ${props => props.theme.fontFamily};
-  float: left;
-  margin: 0;
-  padding: 0;
-  font-size: 2.5rem;
-  line-height: 3rem;
-`
-
 const Toolbar = ({ onToggleLight, theme, onAddEntry }) => (
   <Wrapper>
     <Container>
-      <Logo>TimeBaby</Logo>
+      <Button float='right' margin='0 0 0 1rem'>
+        <Icon glyph='logout' width='1rem' height='1rem' />
+      </Button>
       <Button onClick={onToggleLight} float='right' margin='0 0 0 1rem'>
         <Icon glyph={theme.isDark ? 'moon' : 'sun'} width='1rem' height='1rem' />
       </Button>
-      <Button type='cta-a' float='right' onClick={onAddEntry}>Start time</Button>
+      <Button type='cta-a' float='right' onClick={onAddEntry} margin='0 0.5rem 0 1rem' freeze>Start time</Button>
     </Container>
   </Wrapper>
 )

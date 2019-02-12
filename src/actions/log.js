@@ -1,3 +1,6 @@
-export const addEntry = () => ({
-  type: 'LOG_ADD_ENTRY'
+export const addEntry = (project) => ({
+  type: 'LOG_ADD_ENTRY',
+  payload: {
+    project
+  }
 })

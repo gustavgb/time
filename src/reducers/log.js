@@ -7,7 +7,7 @@ const defaultState = {
 
 const defaultEntry = {
   start: 0,
-  end: 0,
+  end: null,
   project: null
 }
 
@@ -18,7 +18,9 @@ const reducer = (state = { ...defaultState }, action) => {
         ...state,
         entries: [].concat(state.entries).concat([{
           ...defaultEntry,
-          id: uuid()
+          id: uuid(),
+          start: Date.now(),
+          project: action.payload.project || null
         }])
       }
     default:

@@ -1,7 +1,8 @@
 import React from 'react'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import Page from 'Components/Page'
-import Timeline from 'Components/Timeline'
+import LogHistory from 'Components/LogHistory'
+import LogOngoing from 'Components/LogOngoing'
 import Toolbar from 'Components/Toolbar'
 import { connect } from 'react-redux'
 import { propModel as themeModel } from 'models/theme'
@@ -26,7 +27,8 @@ const App = ({ theme }) => (
     <Page>
       <GlobalStyle />
       <Toolbar />
-      <Timeline />
+      <LogOngoing />
+      <LogHistory />
     </Page>
   </ThemeProvider>
 )

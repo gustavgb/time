@@ -1,6 +1,8 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { propModel as entryModel } from 'models/log'
+import { formatDate } from 'utils/date'
 
 const Row = styled.tr`
   ${props => props.theme.lightTransition}
@@ -32,24 +34,30 @@ const CellBody = styled.div`
   font-size: ${props => props.theme.fontMedium};
 `
 
-const Entry = ({ entry }) => (
+const Entry = ({ entry, ongoing }) => (
   <Row>
     <Cell>
       Start:
-      <CellBody>{entry.start}</CellBody>
+      <CellBody>{formatDate(entry.start)}</CellBody>
     </Cell>
-    <Cell>
-      End:
-      {entry.end}
-    </Cell>
-    <Cell>
-      {entry.project}
-    </Cell>
+    {!ongoing && (
+      <Cell>
+        End:
+        <CellBody>{formatDate(entry.end)}</CellBody>
+      </Cell>
+    )}
+    {entry.project && (
+      <Cell>
+        Project:
+        <CellBody>{entry.project}</CellBody>
+      </Cell>
+    )}
   </Row>
 )
 
 Entry.propTypes = {
-  entry: entryModel
+  entry: entryModel,
+  ongoing: PropTypes.bool
 }
 
 export default Entry

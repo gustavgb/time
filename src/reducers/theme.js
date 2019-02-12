@@ -20,6 +20,7 @@ const commonTheme = {
   `,
   fontSmall: '1rem',
   fontMedium: '1.3rem',
+  fontLarge: '1.6rem',
   fontFamily: 'Sarabun, sans-serif'
 }
 

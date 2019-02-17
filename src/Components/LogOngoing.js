@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import { selectOngoingEntries } from 'selectors/log'
 import Entry from 'Components/Entry'
 import SectionHeader from 'Components/SectionHeader'
+import { endEntry } from 'actions/log'
 
 const Table = styled.table`
   width: 100%;
@@ -13,13 +14,18 @@ const Table = styled.table`
   border-spacing: 0 1.3rem;
 `
 
-const LogOngoing = ({ entries }) => entries.length > 0 ? (
+const LogOngoing = ({ entries, onEndEntry }) => entries.length > 0 ? (
   <React.Fragment>
     <SectionHeader>Ongoing</SectionHeader>
     <Table>
       <tbody>
         {entries.map(entry => (
-          <Entry key={entry.id} entry={entry} ongoing />
+          <Entry
+            key={entry.id}
+            entry={entry}
+            onEnd={() => onEndEntry(entry.id)}
+            ongoing
+          />
         ))}
       </tbody>
     </Table>
@@ -27,11 +33,15 @@ const LogOngoing = ({ entries }) => entries.length > 0 ? (
 ) : null
 
 LogOngoing.propTypes = {
-  entries: PropTypes.arrayOf(entryModel)
+  entries: PropTypes.arrayOf(entryModel),
+  onEndEntry: PropTypes.func
 }
 
 export default connect(
   state => ({
     entries: selectOngoingEntries(state)
+  }),
+  dispatch => ({
+    onEndEntry: (id) => dispatch(endEntry(id))
   })
 )(LogOngoing)

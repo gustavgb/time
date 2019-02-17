@@ -33,7 +33,8 @@ const themes = {
     foreground: 'white',
     border: '#bbb',
     ctaColors: {
-      a: '#00fc50'
+      a: '#00fc50',
+      b: '#e50000'
     }
   },
   dark: {
@@ -44,7 +45,8 @@ const themes = {
     foreground: '#777',
     border: '#555',
     ctaColors: {
-      a: '#00c030'
+      a: '#00c030',
+      b: '#e50000'
     }
   }
 }

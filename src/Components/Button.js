@@ -8,6 +8,8 @@ const ButtonStyle = styled.button`
     switch (props.type) {
       case 'cta-a':
         return props.theme.ctaColors.a
+      case 'cta-b':
+        return props.theme.ctaColors.b
       default:
         return props.theme.foreground
     }
@@ -22,6 +24,18 @@ const ButtonStyle = styled.button`
   font-size: 1.4rem;
   margin: ${props => props.margin || '0'};
   line-height: 1.4rem;
+  cursor: ${props => props.frozen ? 'not-allowed' : 'pointer'};
+  opacity: ${props => props.frozen ? '0.2' : '1'};
+`
+
+const ButtonUnstyled = styled.button`
+  ${props => props.theme.lightTransition}
+  background-color: transparent;
+  border-width: 0;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  color: ${props => props.theme.textColor};
   cursor: ${props => props.frozen ? 'not-allowed' : 'pointer'};
   opacity: ${props => props.frozen ? '0.2' : '1'};
 `
@@ -61,6 +75,16 @@ class Button extends Component {
   render () {
     const { children, type, float, margin } = this.props
     const { frozen } = this.state
+
+    if (type === 'unstyled') {
+      return (
+        <ButtonUnstyled
+          onClick={frozen ? null : this.handleClick.bind(this)}
+          onMouseLeave={this.handleMouseLeave.bind(this)}
+          frozen={frozen}
+        >{children}</ButtonUnstyled>
+      )
+    }
 
     return (
       <ButtonStyle

@@ -4,21 +4,26 @@ import React from 'react'
 import ReactDOM from 'react-dom/server'
 import express from 'express'
 import { ServerStyleSheet } from 'styled-components'
-import { applyPreloading } from 'utils/fetch'
+import { beginPreloading, applyPreloading } from 'utils/fetch'
+import path from 'path'
 
 import App from 'App'
 
 const PORT = process.env.PORT || 3000
 const app = express()
 
+app.use(express.urlencoded({ extended: true }))
+
 app.get('/api/test', (req, res) => {
-  res.json({
-    name: 'Gustav Burchardt',
-    bio: 'I like to create stuff'
-  })
+  setTimeout(() => {
+    res.json({
+      name: 'Gustav Burchardt',
+      bio: 'I like to create stuff'
+    })
+  }, 1000)
 })
 
-const buildHMTL = (app, styles) => `
+const buildHMTL = (app = '', preload = '', styles = '') => `
   <html>
     <head>
       <title>React app</title>
@@ -27,6 +32,7 @@ const buildHMTL = (app, styles) => `
       ${styles}
     </head>
     <body>
+      ${preload}
       <div id="root">${app}</div>
       <script type="text/javascript" src="./bundle.js"></script>
     </body>
@@ -35,15 +41,31 @@ const buildHMTL = (app, styles) => `
 
 app.use(express.static('./dist'))
 
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'dist/favicon.ico'))
+})
+
 app.get('/*', async (req, res) => {
+  const options = {
+    preload: req.query.preload !== 'false'
+  }
+
+  console.log(req.query, options)
+
   const sheet = new ServerStyleSheet()
   try {
-    let app = await applyPreloading(ReactDOM.renderToString(sheet.collectStyles(<App />)))
-    const styleEl = sheet.getStyleTags()
-
-    res.send(buildHMTL(app, styleEl))
+    if (options.preload) {
+      console.log('Begin preload')
+      beginPreloading()
+      const [app, preload] = await applyPreloading(ReactDOM.renderToString(sheet.collectStyles(<App />)))
+      const styleEl = sheet.getStyleTags()
+      res.send(buildHMTL(app, preload, styleEl))
+    } else {
+      res.send(buildHMTL())
+    }
   } catch (e) {
     console.error(e)
+    res.status(500).send()
   } finally {
     sheet.seal()
   }

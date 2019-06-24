@@ -7,13 +7,13 @@ const isClient = !!(
 )
 
 const preloads = []
-let cache = {}
-
-if (isClient) {
-  window.getCache = () => cache
-}
+let preloading = false
 
 const urlToKey = (url) => url.replace(/[-!$%^&*()_+|~=`{}[\]:";'<>?,./]/g, '_').replace(/_{2,}/, '_')
+
+export const beginPreloading = () => {
+  preloading = true
+}
 
 export const applyPreloading = (markup) => {
   return new Promise((resolve, reject) => {
@@ -39,8 +39,6 @@ export const applyPreloading = (markup) => {
             }, data)
 
             if (item) {
-              preloaded[match] = item
-
               return item
             } else {
               return ''
@@ -50,40 +48,18 @@ export const applyPreloading = (markup) => {
           return ''
         })
 
-        const result = `<div style="display: none;" id="preload-cache">${JSON.stringify(preloaded)}</div>${appMarkup}`
+        const preloadTag = `<script>window.__PRELOADED_DATA__ = ${JSON.stringify(preloaded)}</script>`
 
-        resolve(result)
+        resolve([appMarkup, preloadTag])
       })
       .catch(err => {
         console.error(err)
         reject(err)
       })
+
+    preloads.length = 0
+    preloading = false
   })
-}
-
-export const hydrate = () => {
-  const el = document.getElementById('preload-cache')
-  cache = JSON.parse(el.innerText)
-
-  el.parentNode.removeChild(el)
-}
-
-const axiosWithCache = (url) => {
-  const key = urlToKey(url)
-
-  console.log(key, cache)
-
-  if (cache[key]) {
-    const data = cache[key]
-    delete cache[key]
-    return Promise.resolve(data)
-  } else {
-    return new Promise((resolve, reject) => {
-      axios(url)
-        .then(res => resolve(res.data))
-        .catch(reject)
-    })
-  }
 }
 
 const recursiveGenerateId = (namespace, obj) => {
@@ -95,54 +71,56 @@ const recursiveGenerateId = (namespace, obj) => {
       return acc
     }, {})
   } else {
-    const key = `{{FETCH_PLACEHOLDER.${namespace}}}`
-    if (cache[key]) {
-      const cachedValue = cache[key]
-      delete cache[key]
-      return cachedValue
-    }
-    return key
+    return `{{FETCH_PLACEHOLDER.${namespace}}}`
   }
 }
 
 export const useFetch = (initialUrl, initialData, { preventPreload = false } = {}) => {
+  const cache = (isClient && window.__PRELOADED_DATA__) || {}
+  const key = urlToKey(initialUrl)
+  let foundCache = false
+  if (cache[key]) {
+    initialData = cache[key]
+    delete cache[key]
+    foundCache = true
+  }
+
+  if (!isClient && preloading && initialUrl && !preventPreload) {
+    if (initialData) {
+      const template = recursiveGenerateId(urlToKey(initialUrl), initialData)
+
+      initialData = template
+    }
+
+    preloads.push(Promise.all([Promise.resolve(urlToKey(initialUrl)), axios(initialUrl)]))
+  }
+
   const [data, setData] = useState(initialData)
   const [url, setUrl] = useState(initialUrl)
   const [isLoading, setIsLoading] = useState(false)
   const [isError, setIsError] = useState(false)
-  const [begunPreload, setBegunPreload] = useState(false)
 
-  if (!begunPreload && initialUrl) {
-    setBegunPreload(true)
+  if (isClient) {
+    useEffect(() => {
+      const fetchData = async () => {
+        setIsError(false)
+        setIsLoading(true)
 
-    if (initialData) {
-      const template = recursiveGenerateId(urlToKey(initialUrl), initialData)
+        try {
+          if (!foundCache) {
+            const result = await axios(url)
 
-      setData(template)
-    }
+            setData(result.data)
+          }
+        } catch (error) {
+          setIsError(true)
+        }
 
-    if (!isClient) {
-      preloads.push(Promise.all([Promise.resolve(urlToKey(initialUrl)), axios(initialUrl)]))
-    }
-  }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsError(false)
-      setIsLoading(true)
-
-      try {
-        const result = await axiosWithCache(url)
-
-        setData(result)
-      } catch (error) {
-        setIsError(true)
+        setIsLoading(false)
       }
-
-      setIsLoading(false)
-    }
-    fetchData()
-  }, [url])
+      fetchData()
+    }, [url])
+  }
 
   return [{ data, isLoading, isError }, setUrl]
 }
